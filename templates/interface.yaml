@@ -1,0 +1,22 @@
+{{- range .Values.parent_interfaces -}}
+apiVersion: nmstate.io/v1beta1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: iface-{{ . }}-vlan{{ $.Values.vlan_id }}
+spec:
+  desiredState:
+    interfaces:
+      - name: vlan{{ $.Values.vlan_id }}
+        state: up
+        type: vlan
+        vlan:
+          base-iface: {{ . }}
+          id: {{ $.Values.vlan_Id }}
+        ipv4:
+          dhcp: true
+          enabled: true
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+    massopen.cloud/primary-interface: "{{ . }}"
+---
+{{ end }}
